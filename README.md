@@ -16,6 +16,82 @@
 
 <details>
  <summary>Themes [line 11]</summary>
+
+### Need for Adding Custom Configuration
+Adding custom configurations to the `tailwind.config.js` file allows you to:
+1. **Maintain Consistency**: Define a consistent design system with specific colors, fonts, spacing, etc., across your project.
+2. **Easily Reuse Styles**: Reuse custom styles throughout your project without redefining them.
+3. **Extend Functionality**: Tailwind CSS provides a lot of utility classes by default, but sometimes you need custom values to meet specific design needs.
+
+### Using Custom Configurations in a Project
+After adding custom configurations in the `tailwind.config.js` file, you can use them directly in your project’s CSS classes.
+
+### Example Code
+Here’s how you can use the custom color and background image defined in your configuration within a React component:
+
+#### 1. `tailwind.config.js`
+Already defined custom configurations:
+```javascript
+module.exports = {
+  theme: {
+    extend: {
+      colors: {
+        color: {
+          1: "#AC6AFF",
+          // other colors...
+        },
+        // other color definitions...
+      },
+      backgroundImage: {
+        'radial-gradient': 'radial-gradient(var(--tw-gradient-stops))',
+        'benefit-card-1': "url(assets/benefits/card-1.svg)",
+        // other background images...
+      },
+    },
+  },
+  plugins: [],
+}
+```
+
+#### 2. Using Custom Colors and Background Images in a React Component
+```jsx
+import React from 'react';
+
+const CustomComponent = () => {
+  return (
+    <div className="p-4">
+      {/* Using custom color */}
+      <div className="bg-color-1 text-white p-4 rounded">
+        This div has a custom background color and white text.
+      </div>
+
+      {/* Using custom background image */}
+      <div className="bg-benefit-card-1 h-64 bg-cover bg-center mt-4">
+        This div has a custom background image.
+      </div>
+
+      {/* Using radial gradient background */}
+      <div className="bg-radial-gradient from-color-1 via-color-2 to-color-3 h-64 mt-4">
+        This div has a radial gradient background.
+      </div>
+    </div>
+  );
+};
+
+export default CustomComponent;
+```
+
+### Explanation
+- **Custom Color**: The `bg-color-1` class applies the custom color `#AC6AFF` as the background color.
+- **Custom Background Image**: The `bg-benefit-card-1` class applies a custom background image (`assets/benefits/card-1.svg`).
+- **Radial Gradient Background**: The `bg-radial-gradient` class applies a radial gradient background with the specified colors.
+
+### How It Works
+- Tailwind CSS processes the `tailwind.config.js` file and generates the necessary CSS based on the custom configurations.
+- When you use the custom classes (`bg-color-1`, `bg-benefit-card-1`, etc.) in your components, Tailwind applies the corresponding styles.
+
+Feel free to ask more questions or for further examples if needed!
+
 </details>
 
 <details>
@@ -400,9 +476,6 @@ export default App;
 These styles ensure your project has a consistent look and feel while leveraging the power of Tailwind CSS for rapid development.
 
 
-</details>
-<details>
- <summary>Themes [line 11]</summary>
 </details>
 
 ## Topic2
