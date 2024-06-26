@@ -7,7 +7,7 @@
 | No. | Topic                                                                 |
 | --- | --------------------------------------------------------------------- |
 | 1   | [Setup and Tailwind Configuration](#setup-and-tailwind-configuration) |
-| 2   | [Topic2](#topic2)                                                     |
+| 2   | [Reusable Button Component](#reusable-button-component)                                                     |
 | 3   | [Topic3](#topic3)                                                     |
 | 4   | [Topic4](#topic4)                                                     |
 | 5   | [Topic5](#topic5)                                                     |
@@ -478,9 +478,151 @@ These styles ensure your project has a consistent look and feel while leveraging
 
 </details>
 
-## Topic2
+## Reusable Button Component
 
-Description for Topic2.
+<details>
+
+<summary>How ButtonSvg and ButtonGradient is working</summary>
+
+### How ButtonSvg and ButtonGradient are Working Together
+
+**ButtonSvg** and **ButtonGradient** work together to create a visually appealing button with gradient effects. Here’s a step-by-step explanation:
+
+- **ButtonGradient** defines several linear gradients within a hidden SVG element. These gradients are stored in the `<defs>` section, which means they are not rendered directly but can be referenced by other SVG elements.
+
+- **ButtonSvg** uses the gradients defined in **ButtonGradient** by referencing their IDs. This allows ButtonSvg to apply gradient strokes and fills to various parts of the SVG.
+
+**How it Works Together**:
+1. **ButtonGradient** is rendered once in the `App` component, ensuring that the defined gradients (`btn-left`, `btn-top`, `btn-bottom`, `btn-right`) are available for use in the SVG elements.
+
+2. **ButtonSvg** uses these gradients by referencing their IDs (e.g., `url(#btn-left)`) to apply gradient strokes and fills to its SVG elements.
+
+3. The **Button** component calls `ButtonSvg` within its `renderButton` and `renderLink` functions, ensuring that the SVGs with gradient effects are rendered inside the button or link.
+
+</details>
+
+<details>
+
+<summary>How `ButtonSvg` References IDs from `ButtonGradient`</summary>
+
+### How `ButtonSvg` References IDs from `ButtonGradient`
+
+The ability for `ButtonSvg` to reference IDs defined in `ButtonGradient` is based on how SVG elements and their definitions work in the browser. Let’s break down the process:
+
+1. **SVG Definitions and Usage**:
+   - In SVG, elements like gradients, patterns, and filters can be defined in a `<defs>` section. These definitions are then referenced by other SVG elements using their IDs.
+   - These definitions can be placed anywhere in the document, and as long as they are in the DOM, they can be referenced by their IDs.
+
+2. **Global Availability**:
+   - When you include `ButtonGradient` in your React component (or any HTML document), the definitions inside it become part of the DOM. They are globally accessible by any SVG element that comes after it in the DOM.
+
+### Detailed Explanation
+
+#### Step-by-Step Breakdown
+
+1. **Define Gradients in `ButtonGradient`**:
+   - The `ButtonGradient` component creates an SVG element with gradient definitions.
+   - These gradients are given unique IDs (`btn-left`, `btn-top`, `btn-bottom`, `btn-right`).
+
+```javascript
+const ButtonGradient = () => {
+  return (
+    <svg className="block" width={0} height={0}>
+      <defs>
+        <linearGradient id="btn-left" x1="50%" x2="50%" y1="0%" y2="100%">
+          <stop offset="0%" stopColor="#89F9E8" />
+          <stop offset="100%" stopColor="#FACB7B" />
+        </linearGradient>
+        <linearGradient id="btn-top" x1="100%" x2="0%" y1="50%" y2="50%">
+          <stop offset="0%" stopColor="#D87CEE" />
+          <stop offset="100%" stopColor="#FACB7B" />
+        </linearGradient>
+        <linearGradient id="btn-bottom" x1="100%" x2="0%" y1="50%" y2="50%">
+          <stop offset="0%" stopColor="#9099FC" />
+          <stop offset="100%" stopColor="#89F9E8" />
+        </linearGradient>
+        <linearGradient id="btn-right" x1="14.635%" x2="14.635%" y1="0%" y2="100%">
+          <stop offset="0%" stopColor="#9099FC" />
+          <stop offset="100%" stopColor="#D87CEE" />
+        </linearGradient>
+      </defs>
+    </svg>
+  );
+};
+
+export default ButtonGradient;
+```
+
+2. **Render `ButtonGradient` in `App` Component**:
+   - By rendering the `ButtonGradient` component in `App`, you ensure that these gradient definitions are included in the DOM.
+   - They are placed with `width={0}` and `height={0}` to be invisible but still present in the document.
+
+```javascript
+import Button from "./components/Button";
+import ButtonGradient from "./assets/svg/ButtonGradient";
+
+function App() {
+  return (
+    <div>
+      <div className="pt-[4.75rem] lg:pt-[5.25rem] overflow-hidden">
+        <Button className="mt-10">something</Button>
+      </div>
+      <ButtonGradient />
+    </div>
+  );
+}
+
+export default App;
+```
+
+3. **Reference Gradients in `ButtonSvg`**:
+   - The `ButtonSvg` component uses the gradients by referencing their IDs using the `url(#id)` syntax.
+   - Because the gradients are already defined in the DOM by `ButtonGradient`, any SVG elements that reference these IDs can use them.
+
+```javascript
+const ButtonSvg = (white) => (
+  <>
+    <svg className="absolute top-0 left-0" width="21" height="44" viewBox="0 0 21 44">
+      <path
+        fill={white ? "white" : "none"}
+        stroke={white ? "white" : "url(#btn-left)"}
+        strokeWidth="2"
+        d="M21,43.00005 L8.11111,43.00005 C4.18375,43.00005 1,39.58105 1,35.36365 L1,8.63637 C1,4.41892 4.18375,1 8.11111,1 L21,1"
+      />
+    </svg>
+    <svg className="absolute top-0 left-[1.3125rem] w-[calc(100%-2.625rem)]" height="44" viewBox="0 0 100 44" preserveAspectRatio="none" fill={white ? "white" : "none"}>
+      {white ? (
+        <polygon fill="white" fillRule="nonzero" points="100 0 100 44 0 44 0 0" />
+      ) : (
+        <>
+          <polygon fill="url(#btn-top)" fillRule="nonzero" points="100 42 100 44 0 44 0 42" />
+          <polygon fill="url(#btn-bottom)" fillRule="nonzero" points="100 0 100 2 0 2 0 0" />
+        </>
+      )}
+    </svg>
+    <svg className="absolute top-0 right-0" width="21" height="44" viewBox="0 0 21 44">
+      <path
+        fill={white ? "white" : "none"}
+        stroke={white ? "white" : "url(#btn-right)"}
+        strokeWidth="2"
+        d="M0,43.00005 L5.028,43.00005 L12.24,43.00005 C16.526,43.00005 20,39.58105 20,35.36365 L20,16.85855 C20,14.59295 18.978,12.44425 17.209,10.99335 L7.187,2.77111 C5.792,1.62675 4.034,1 2.217,1 L0,1"
+      />
+    </svg>
+  </>
+);
+
+export default ButtonSvg;
+```
+
+### Summary
+
+1. **ButtonGradient** defines gradient styles using `<defs>` in an SVG element and assigns unique IDs to them.
+2. **ButtonGradient** is rendered in the `App` component, making the gradients available globally in the DOM.
+3. **ButtonSvg** references these gradient IDs (e.g., `url(#btn-left)`) to apply gradient fills and strokes to its SVG paths and polygons.
+4. **Button** component includes **ButtonSvg** within its rendering logic, ensuring that the buttons rendered use these gradient-enhanced SVGs.
+
+This modular approach allows you to define SVG gradients once and reuse them across multiple components, ensuring consistency and reducing duplication. If you have any more questions or need further clarification, feel free to ask!
+</details>
 
 ## Topic3
 
